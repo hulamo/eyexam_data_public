@@ -56,28 +56,26 @@ Session-level analytics export from the Eyexam.AI back end.
 
 In-person prescriptions captured by VDV optometrists for patients who received an SMS link to Eyexam.AI after their visit. **This file is the de-identified version**: seven columns containing patient name, phone number, branch identifier, and lens product information were removed before publication.
 
-**Sheet: `Graduaciones`** — 21 rows × 15 cols. One row per patient who completed both an in-person VDV exam and clicked the SMS link.
+**Sheet: `Graduaciones`** — 21 rows × 13 cols. One row per patient who completed both an in-person VDV exam and clicked the SMS link.
 
 | # | Column | Type | Notes |
 |---|---|---|---|
 | 0 | `Codigo` | string | Join key. Matches the `sms_code` parameter in the analytics file's `URL de aterrizaje`. |
 | 1 | `Status` | string | Always `ok` for valid records. |
-| 2 | `Folio Examen` | int | Internal VDV exam number. |
-| 3 | `ID Paciente` | string | VDV internal patient ID (numeric, non-reversible). |
-| 4 | `Edad` | int | Age at exam (years). |
-| 5 | `Sexo` | string | `HOMBRE` / `MUJER`. |
-| 6 | `Fecha Examen` | datetime | Date and time of in-person exam. |
-| 7 | `Esfera D` | string | Right-eye sphere, e.g. `+050`, `-150` (units: hundredths of a diopter; parse as `sign × value / 100`). |
-| 8 | `Cilindro D` | string | Right-eye cylinder, trailing `X` indicates power notation. |
-| 9 | `Esfera I` | string | Left-eye sphere. |
-| 10 | `Cilindro I` | string | Left-eye cylinder. |
-| 11 | `Adicion` | string | Reading addition for presbyopic patients. |
-| 12 | `Es Receta` | string | `SI` if the patient walked out with a prescription, `NO` otherwise. |
-| 13 | `Campaña` | string | Marketing campaign of origin. |
-| 14 | `Primer Lookup` | datetime | When the `Codigo` was first queried back from the system. |
+| 2 | `Edad` | int | Age at exam (years). |
+| 3 | `Sexo` | string | `HOMBRE` / `MUJER`. |
+| 4 | `Fecha Examen` | datetime | Date and time of in-person exam. |
+| 5 | `Esfera D` | string | Right-eye sphere, e.g. `+050`, `-150` (units: hundredths of a diopter; parse as `sign × value / 100`). |
+| 6 | `Cilindro D` | string | Right-eye cylinder, trailing `X` indicates power notation. |
+| 7 | `Esfera I` | string | Left-eye sphere. |
+| 8 | `Cilindro I` | string | Left-eye cylinder. |
+| 9 | `Adicion` | string | Reading addition for presbyopic patients. |
+| 10 | `Es Receta` | string | `SI` if the patient walked out with a prescription, `NO` otherwise. |
+| 11 | `Campaña` | string | Marketing campaign of origin. |
+| 12 | `Primer Lookup` | datetime | When the `Codigo` was first queried back from the system. |
 
-**Columns removed from the original (PII)**
-`Paciente` (name), `Celular` (phone), `Sucursal` (branch identifier), `Mica D`, `Mica I` (lens type), `Material D`, `Material I` (lens material).
+**Columns removed from the original (PII and internal identifiers)**
+`Paciente` (name), `Celular` (phone), `Sucursal` (branch identifier), `Folio Examen` (internal VDV exam number), `ID Paciente` (VDV internal patient ID), `Mica D`, `Mica I` (lens type), `Material D`, `Material I` (lens material).
 
 **Parsing the prescription columns**
 Diopter values are stored as signed integer strings in hundredths. Examples:
@@ -145,11 +143,10 @@ Funnel filter: 788 sessions → 257 with `sms_code` → 21 matched in `graduacio
 
 ## Privacy and intended use
 
-This release is for **academic reproducibility** of the interim report. All directly identifying information was removed before publication. Specifically:
+This release is for **academic reproducibility** of the interim report. All directly identifying information and internal VDV identifiers were removed before publication. Specifically:
 
 - Browser sessions in the analytics file have always been keyed by anonymous UUID (no PII in the original export).
-- The graduaciones file had patient name, phone, branch, and lens product columns stripped.
-- VDV-internal `Folio Examen` and `ID Paciente` numeric IDs are retained as opaque identifiers; they are not externally reversible without access to VDV systems.
+- The graduaciones file had patient name, phone, branch, VDV internal exam and patient IDs, and lens product columns stripped.
 - Prescription values are clinical measurements, not personal data under LFPDPPP or GDPR definitions.
 
 Please do not attempt to re-identify individuals from these files. If you build on this dataset, cite the interim report and link back to this repository.
